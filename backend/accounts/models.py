@@ -6,7 +6,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-
+    role = models.CharField(max_length=20)
+    is_available = models.BooleanField(default=False)
     ROLE_CHOICES = [
         ('CLIENT', 'Client'),
         ('COURIER', 'Livreur'),

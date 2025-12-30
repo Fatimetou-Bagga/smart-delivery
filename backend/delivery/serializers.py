@@ -27,7 +27,32 @@ class DeliverySerializer(serializers.ModelSerializer):
             'assigned_at',
             'delivered_at',
         ]
+        
     def update(self, instance, validated_data):
-        if validated_data.get('status') == 'DELIVERED':
-           instance.delivered_at = timezone.now()
-           return super().update(instance, validated_data)
+        new_status = validated_data.get('status', instance.status)
+        current_status = instance.status
+
+        # Règles de transition autorisées
+        allowed_transitions = {
+            'ASSIGNED': ['IN_PROGRESS'],
+            'IN_PROGRESS': ['DELIVERED'],
+        }
+
+        # Livraison déjà terminée → bloquée
+        if current_status == 'DELIVERED':
+            raise serializers.ValidationError(
+                "Une livraison terminée ne peut plus être modifiée."
+            )
+
+        # Vérification des transitions
+        if new_status != current_status:
+            if new_status not in allowed_transitions.get(current_status, []):
+                raise serializers.ValidationError(
+                    f"Transition interdite : {current_status} → {new_status}"
+                )
+
+        # Si livrée, on enregistre la date
+        if new_status == 'DELIVERED':
+            instance.delivered_at = timezone.now()
+
+        return super().update(instance, validated_data)
