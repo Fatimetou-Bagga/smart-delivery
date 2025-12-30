@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from .models import Delivery
 from delivery_requests.serializers import DeliveryRequestSerializer
@@ -26,3 +27,7 @@ class DeliverySerializer(serializers.ModelSerializer):
             'assigned_at',
             'delivered_at',
         ]
+    def update(self, instance, validated_data):
+        if validated_data.get('status') == 'DELIVERED':
+           instance.delivered_at = timezone.now()
+           return super().update(instance, validated_data)
