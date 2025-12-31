@@ -1,52 +1,47 @@
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
-// import '../constants/api_urls.dart';
-// import '../storage/secure_storage.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../storage/secure_storage.dart';
 
-// class ApiClient {
-//   final SecureStorage storage;
+class ApiClient {
+  final SecureStorage _storage = SecureStorage();
 
-//   ApiClient(this.storage);
+  // Base URL de ton backend Django
+  static const String baseUrl = 'http://localhost:8000/api';
 
-//   Future<Map<String, String>> _headers() async {
-//     final token = await storage.getToken();
-//     return {
-//       'Content-Type': 'application/json',
-//       if (token != null) 'Authorization': 'Bearer $token',
-//     };
-//   }
+  Future<http.Response> get(String endpoint) async {
+    final token = await _storage.getAccessToken();
 
-//   Future<dynamic> get(String endpoint) async {
-//     final response = await http.get(
-//       Uri.parse(ApiUrls.baseUrl + endpoint),
-//       headers: await _headers(),
-//     );
-//     return _handleResponse(response);
-//   }
+    return http.get(Uri.parse('$baseUrl$endpoint'), headers: _headers(token));
+  }
 
-//   Future<dynamic> post(String endpoint, Map data) async {
-//     final response = await http.post(
-//       Uri.parse(ApiUrls.baseUrl + endpoint),
-//       headers: await _headers(),
-//       body: jsonEncode(data),
-//     );
-//     return _handleResponse(response);
-//   }
+  Future<http.Response> post(String endpoint, Map<String, dynamic> body) async {
+    final token = await _storage.getAccessToken();
 
-//   Future<dynamic> patch(String endpoint, Map data) async {
-//     final response = await http.patch(
-//       Uri.parse(ApiUrls.baseUrl + endpoint),
-//       headers: await _headers(),
-//       body: jsonEncode(data),
-//     );
-//     return _handleResponse(response);
-//   }
+    return http.post(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _headers(token),
+      body: jsonEncode(body),
+    );
+  }
 
-//   dynamic _handleResponse(http.Response response) {
-//     if (response.statusCode >= 200 && response.statusCode < 300) {
-//       return response.body.isNotEmpty ? jsonDecode(response.body) : null;
-//     } else {
-//       throw Exception('API Error ${response.statusCode}: ${response.body}');
-//     }
-//   }
-// }
+  Future<http.Response> patch(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
+    final token = await _storage.getAccessToken();
+
+    return http.patch(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _headers(token),
+      body: jsonEncode(body),
+    );
+  }
+
+  Map<String, String> _headers(String? token) {
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
+}
