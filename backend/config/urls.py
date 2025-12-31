@@ -21,7 +21,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from accounts.views import CreateCourierView, RegisterView, UserViewSet
+from accounts.views import CreateCourierView, MeView, RegisterView, UserViewSet
 from delivery.views import DeliveryViewSet
 from delivery_requests.views import DeliveryRequestViewSet
 from rest_framework_simplejwt.views import (
@@ -55,6 +55,7 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path(
     'api/admin/create-courier/',CreateCourierView.as_view(),name='create-courier'),
+    path('api/auth/me/', MeView.as_view(), name='auth-me'),
 
     path('api/', include(router.urls)),
 

@@ -16,7 +16,6 @@ from rest_framework import status
 class DeliveryViewSet(viewsets.ModelViewSet):
 
     serializer_class = DeliverySerializer
-    permission_classes = [IsAuthenticated,IsCourier]
     
     def get_queryset(self):
         return Delivery.objects.filter(courier=self.request.user)
@@ -63,3 +62,15 @@ class DeliveryViewSet(viewsets.ModelViewSet):
         if delivery.status == 'DELIVERED' and delivery.delivered_at is None:
            delivery.delivered_at = timezone.now()
            delivery.save()
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'update', 'partial_update']:
+            permission_classes = [IsAuthenticated, IsCourier]
+
+        elif self.action == 'accept':
+            permission_classes = [IsAuthenticated, IsCourier]
+
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]

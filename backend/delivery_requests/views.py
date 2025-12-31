@@ -13,7 +13,7 @@ from rest_framework.response import Response
 class DeliveryRequestViewSet(viewsets.ModelViewSet):
 
     serializer_class = DeliveryRequestSerializer
-    permission_classes = [IsAuthenticated,IsClient]
+    
     @action(
         detail=False,
         methods=['get'],
@@ -33,5 +33,19 @@ class DeliveryRequestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(client=self.request.user)
+<<<<<<< HEAD
 
 
+=======
+    def get_permissions(self):
+        if self.action in ['list', 'create']:
+            permission_classes = [IsAuthenticated, IsClient]
+
+        elif self.action == 'available':
+            permission_classes = [IsAuthenticated, IsCourier]
+
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+>>>>>>> c2e6c2dc8849fe28a1dd235745fae68020365f0d
