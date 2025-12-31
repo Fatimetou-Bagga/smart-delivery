@@ -31,7 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'drf_yasg',
+    # "corsheaders",
+    # 'drf_yasg',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,6 +133,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+# ALLOWED_HOSTS = [
+#     '127.0.0.1', 
+#     'localhost',
+#     '172.20.10.2',  # <-- ajoute ton IP locale
+# ]
 
 # JWT configuration
 SIMPLE_JWT = {
