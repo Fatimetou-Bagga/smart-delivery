@@ -61,4 +61,28 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> registerClient({
+    required String username,
+    required String email,
+    required String password,
+    required String password2,
+    required String phoneNumber,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _authService.registerClient(
+        username: username,
+        email: email,
+        password: password,
+        password2: password2,
+        phoneNumber: phoneNumber,
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

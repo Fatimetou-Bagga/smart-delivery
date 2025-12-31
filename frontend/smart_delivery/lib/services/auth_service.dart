@@ -43,21 +43,25 @@ class AuthService {
 
   /// REGISTER
   /// Appelle /auth/register/
-  Future<void> register({
+
+  Future<void> registerClient({
     required String username,
     required String email,
     required String password,
-    required String role,
+    required String password2,
+    required String phoneNumber,
   }) async {
-    final response = await _apiClient.post(ApiUrls.register, {
+    final response = await _apiClient.post('/auth/register/', {
       'username': username,
       'email': email,
       'password': password,
-      'role': role,
+      'password2': password2,
+      'role': 'CLIENT',
+      'phone_number': phoneNumber,
     });
 
     if (response.statusCode != 201 && response.statusCode != 200) {
-      throw Exception('Registration failed');
+      throw Exception('Erreur lors de l’inscription');
     }
   }
 

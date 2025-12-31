@@ -22,6 +22,16 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
+    def post(self, request):
+      serializer = RegisterSerializer(data=request.data)
+      if not serializer.is_valid():
+        print(serializer.errors) 
+        return Response(serializer.errors, status=400)
+
+      user = serializer.save()
+      return Response(UserSerializer(user).data, status=201)
+
+
 class CreateCourierView(generics.CreateAPIView):
     """
     Création d’un compte chauffeur (COURIER)
