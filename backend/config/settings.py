@@ -134,11 +134,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
-# ALLOWED_HOSTS = [
-#     '127.0.0.1', 
-#     'localhost',
-#     '172.20.10.2',  # <-- ajoute ton IP locale
-# ]
+ALLOWED_HOSTS = [
+     '127.0.0.1', 
+    'localhost',
+    '172.20.10.2',  # <-- ajoute ton IP locale
+    '10.0.2.2',
+]
 
 # JWT configuration
 SIMPLE_JWT = {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_delivery/screens/client/client_home.dart';
+import 'package:smart_delivery/screens/client/client_shell.dart';
 import 'package:smart_delivery/screens/courier/courier_home.dart';
 import '../../providers/auth_provider.dart';
 import 'login_screen.dart';
@@ -21,7 +22,7 @@ class AuthGate extends StatelessWidget {
     }
 
     if (auth.role == 'CLIENT') {
-      return const ClientHomeScreen();
+      return const ClientShell();
     }
 
     if (auth.role == 'COURIER') {
