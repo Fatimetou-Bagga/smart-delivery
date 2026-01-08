@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../core/network/api_client.dart';
+import 'package:http/http.dart' as http;
 
 class DeliveryService {
   final ApiClient _api = ApiClient();
@@ -34,4 +35,19 @@ class DeliveryService {
     }
     throw Exception('Erreur chargement livraisons');
   }
+
+  Future<void> updateDeliveryStatus(int deliveryId, String status) async {
+  final response = await _api.patch(
+    '/deliveries/$deliveryId/',
+    {
+      'status': status,
+    },
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Erreur changement de statut');
+  }
 }
+
+}
+

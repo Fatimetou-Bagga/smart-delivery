@@ -14,4 +14,5 @@ class ApiUrls {
   // DELIVERIES (courier)
   static const String deliveries = '/deliveries/';
   static const String acceptDelivery = '/deliveries/accept/';
+  static String updateDeliveryStatus(int id) => '/deliveries/$id/';
 }
