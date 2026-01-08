@@ -6,7 +6,8 @@ class ApiClient {
   final SecureStorage _storage = SecureStorage();
 
   // Base URL de ton backend Django
-  static const String baseUrl = 'http://localhost:8000/api';
+  //static const String baseUrl = 'http://localhost:8000/api';
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
 
   Future<http.Response> get(String endpoint) async {
     final token = await _storage.getAccessToken();
