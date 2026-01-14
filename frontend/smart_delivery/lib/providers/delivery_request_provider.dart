@@ -5,12 +5,12 @@ import '../services/delivery_request_service.dart';
 class DeliveryRequestProvider extends ChangeNotifier {
   final DeliveryRequestService _service = DeliveryRequestService();
 
-  bool loading = false;
+  bool _loading = false;
   String? error;
   List<DeliveryRequestModel> requests = [];
-
+  bool get loading => _loading;
   Future<void> fetchMyRequests() async {
-    loading = true;
+    _loading = true;
     error = null;
     notifyListeners();
 
@@ -19,7 +19,7 @@ class DeliveryRequestProvider extends ChangeNotifier {
     } catch (e) {
       error = e.toString();
     } finally {
-      loading = false;
+      _loading = false;
       notifyListeners();
     }
   }
@@ -31,7 +31,7 @@ class DeliveryRequestProvider extends ChangeNotifier {
     required String pickupAddress,
     required String deliveryAddress,
   }) async {
-    loading = true;
+    _loading = true;
     error = null;
     notifyListeners();
 
@@ -47,8 +47,13 @@ class DeliveryRequestProvider extends ChangeNotifier {
     } catch (e) {
       error = e.toString();
     } finally {
-      loading = false;
+      _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> cancel(int id) async {
+    await _service.cancelRequest(id);
+    await fetchMyRequests(); // refresh
   }
 }

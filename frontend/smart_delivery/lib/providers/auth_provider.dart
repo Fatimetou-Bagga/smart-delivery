@@ -29,7 +29,6 @@ class AuthProvider extends ChangeNotifier {
 
       _user = user;
       _isAuthenticated = true;
-      await restoreSession();
     } catch (e) {
       _isAuthenticated = false;
       rethrow;

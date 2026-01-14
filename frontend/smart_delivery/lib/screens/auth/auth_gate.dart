@@ -12,7 +12,8 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
-
+    print('AUTH ROLE = ${auth.role}');
+    print('AUTH USER = ${auth.user}');
     if (auth.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -29,6 +30,6 @@ class AuthGate extends StatelessWidget {
       return const CourierHomeScreen();
     }
 
-    return const LoginScreen();
+    return const Scaffold(body: Center(child: Text('Rôle inconnu')));
   }
 }

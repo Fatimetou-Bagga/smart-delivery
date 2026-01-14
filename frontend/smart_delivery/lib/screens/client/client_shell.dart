@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smart_delivery/screens/client/profile_screen.dart';
+import 'package:smart_delivery/screens/client/tracking_map_screen.dart';
 import 'client_home.dart';
 import 'my_requests_screen.dart';
-import '../shared/profile_screen.dart';
 
 class ClientShell extends StatefulWidget {
   const ClientShell({super.key});
@@ -15,9 +16,9 @@ class _ClientShellState extends State<ClientShell> {
 
   final _pages = const [
     ClientHomeScreen(),
-    // MyRequestsScreen(),
-    // TrackingMapScreen(),
-    // ProfileScreen(),
+    MyRequestsScreen(),
+    TrackingMapScreen(),
+    ClientProfileScreen(),
   ];
 
   @override

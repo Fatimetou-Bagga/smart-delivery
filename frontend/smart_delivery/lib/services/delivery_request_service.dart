@@ -37,4 +37,15 @@ class DeliveryRequestService {
     }
     throw Exception('Erreur chargement requests: ${response.body}');
   }
+
+  Future<void> cancelRequest(int id) async {
+    final response = await _apiClient.post(
+      '/delivery-requests/$id/cancel/',
+      {},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Impossible d’annuler');
+    }
+  }
 }

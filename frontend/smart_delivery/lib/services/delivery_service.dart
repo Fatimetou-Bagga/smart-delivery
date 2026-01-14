@@ -37,17 +37,20 @@ class DeliveryService {
   }
 
   Future<void> updateDeliveryStatus(int deliveryId, String status) async {
-  final response = await _api.patch(
-    '/deliveries/$deliveryId/',
-    {
+    final response = await _api.patch('/deliveries/$deliveryId/', {
       'status': status,
-    },
-  );
+    });
 
-  if (response.statusCode != 200) {
-    throw Exception('Erreur changement de statut');
+    if (response.statusCode != 200) {
+      throw Exception('Erreur changement de statut');
+    }
+  }
+
+  Future<void> cancelRequest(int id) async {
+    final response = await _api.post('/delivery-requests/$id/cancel/', {});
+
+    if (response.statusCode != 200) {
+      throw Exception('Impossible d’annuler');
+    }
   }
 }
-
-}
-

@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 200,
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 229, 132, 232),
+              color: Color(0xFF6A1B6D),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
@@ -156,7 +156,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             : const Text(
                                 'Se connecter',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                       ),
                     ),

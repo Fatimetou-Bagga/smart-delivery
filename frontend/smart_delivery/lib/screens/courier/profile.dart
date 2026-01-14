@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_delivery/providers/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -9,7 +11,8 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF6F6F6),
 
       body: SafeArea(
-        child: SingleChildScrollView( // ✅ FIX OVERFLOW
+        child: SingleChildScrollView(
+          // ✅ FIX OVERFLOW
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -17,10 +20,7 @@ class ProfileScreen extends StatelessWidget {
                 /// TITLE
                 const Text(
                   'Profile',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
 
                 const SizedBox(height: 30),
@@ -82,7 +82,9 @@ class ProfileScreen extends StatelessWidget {
                   title: 'Logout',
                   iconColor: Colors.red,
                   textColor: Colors.red,
-                  onTap: () {},
+                  onTap: () async {
+                    await context.read<AuthProvider>().logout();
+                  },
                 ),
               ],
             ),
@@ -116,13 +118,7 @@ class _ProfileItem extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: iconColor),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          color: textColor,
-        ),
-      ),
+      title: Text(title, style: TextStyle(fontSize: 16, color: textColor)),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
