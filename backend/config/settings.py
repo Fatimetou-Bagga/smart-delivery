@@ -61,18 +61,19 @@ ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],  # ✅ add this
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -122,7 +123,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
 from datetime import timedelta
 
 # Django REST Framework configuration
@@ -135,10 +140,7 @@ REST_FRAMEWORK = {
     ),
 }
 ALLOWED_HOSTS = [
-     '127.0.0.1', 
-    'localhost',
-    '172.20.10.2',  # <-- ajoute ton IP locale
-    '10.0.2.2',
+     '*',
 ]
 
 # JWT configuration
@@ -164,3 +166,12 @@ CORS_ALLOW_HEADERS = [
     'content-type',
     'accept',
 ]
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "abdallahizarough@gmail.com"
+EMAIL_HOST_PASSWORD = "xopi azqz lzyc nnhh"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

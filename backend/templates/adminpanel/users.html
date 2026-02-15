@@ -1,0 +1,77 @@
+{% extends 'adminpanel/base.html' %}
+{% block title %}Users | Smart Delivery{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block page_sub %}List, suspend (deactivate), activate, or delete users.{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="get" class="filters">
+    <div class="field">
+      <label>Role</label>
+      <select name="role">
+        <option value="">All</option>
+        <option value="CLIENT" {% if role == 'CLIENT' %}selected{% endif %}>CLIENT</option>
+        <option value="COURIER" {% if role == 'COURIER' %}selected{% endif %}>COURIER</option>
+        <option value="ADMIN" {% if role == 'ADMIN' %}selected{% endif %}>ADMIN</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Search</label>
+      <input type="text" name="q" value="{{ q|default:'' }}" placeholder="username or email"/>
+    </div>
+    <div class="actions">
+      <button class="btn" type="submit">Filter</button>
+      <a class="btn" href="/admin/users/">Reset</a>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th style="width: 320px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>#{{ u.id }}</td>
+          <td>{{ u.username }}</td>
+          <td class="muted">{{ u.email }}</td>
+          <td><span class="pill">{{ u.role }}</span></td>
+          <td>
+            {% if u.is_active %}
+              <span class="pill ok">ACTIVE</span>
+            {% else %}
+              <span class="pill warn">SUSPENDED</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="user_id" value="{{ u.id }}"/>
+              {% if u.is_active %}
+                <button class="btn warn" name="action" value="suspend" type="submit">Suspend</button>
+              {% else %}
+                <button class="btn green" name="action" value="activate" type="submit">Activate</button>
+              {% endif %}
+              <button class="btn danger" name="action" value="delete" type="submit"
+                onclick="return confirm('Delete user {{ u.username }}? This cannot be undone.')">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr><td colspan="6" class="muted">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

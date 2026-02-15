@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{% block title %}Smart Delivery | Admin{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'adminpanel/adminpanel.css' %}">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">SD</div>
+        <div>
+          <div class="brand-title">Smart Delivery</div>
+          <div class="brand-sub">Admin panel</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item {% if active == 'dashboard' %}active{% endif %}" href="/admin/dashboard/">Dashboard</a>
+        <a class="nav-item {% if active == 'create' %}active{% endif %}" href="/admin/create-courier/">Create Livreur</a>
+        <a class="nav-item {% if active == 'assign' %}active{% endif %}" href="/admin/assign-courier/">Assign Requests</a>
+        <a class="nav-item {% if active == 'users' %}active{% endif %}" href="/admin/users/">Users</a>
+        <div class="nav-sep"></div>
+        <a class="nav-item danger" href="/admin/logout/">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">{% block page_title %}Admin{% endblock %}</h1>
+          <div class="page-sub">{% block page_sub %}{% endblock %}</div>
+        </div>
+        <div class="who">
+          <div class="who-label">Signed in as</div>
+          <div class="who-user">{{ request.user.username }}</div>
+        </div>
+      </header>
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="msg {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

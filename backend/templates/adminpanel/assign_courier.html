@@ -1,0 +1,64 @@
+{% extends 'adminpanel/base.html' %}
+{% block title %}Assign Courier | Smart Delivery{% endblock %}
+{% block page_title %}Assign Courier{% endblock %}
+{% block page_sub %}Assign a pending delivery request to a courier (creates a Delivery if missing).{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="grid2">
+      <div class="field">
+        <label>Delivery request</label>
+        {{ form.delivery_request }}
+        {% if form.delivery_request.errors %}<div class="err">{{ form.delivery_request.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>Courier</label>
+        {{ form.courier }}
+        {% if form.courier.errors %}<div class="err">{{ form.courier.errors|striptags }}</div>{% endif %}
+      </div>
+    </div>
+
+    {% if form.non_field_errors %}<div class="err">{{ form.non_field_errors|striptags }}</div>{% endif %}
+
+    <div class="actions">
+      <button class="btn primary" type="submit">Assign</button>
+      <a class="btn" href="/admin/dashboard/">Back</a>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2 class="h2">Recent unassigned requests</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Client</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Pickup → Delivery</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in unassigned %}
+        <tr>
+          <td>#{{ r.id }}</td>
+          <td>{{ r.client.username }}</td>
+          <td>{{ r.product_type }}</td>
+          <td><span class="pill">{{ r.status }}</span></td>
+          <td class="muted">{{ r.pickup_address }} → {{ r.delivery_address }}</td>
+          <td class="muted">{{ r.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="muted">No unassigned requests.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

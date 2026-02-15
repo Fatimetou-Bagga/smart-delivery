@@ -4,6 +4,32 @@ from django.db import models
 from django.db import models
 from django.conf import settings
 from delivery_requests.models import DeliveryRequest
+from django.conf import settings
+from django.db import models
+
+class TrackingPoint(models.Model):
+    delivery = models.ForeignKey(
+        "delivery.Delivery",
+        on_delete=models.CASCADE,
+        related_name="tracking_points",
+    )
+    courier = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tracking_points",
+    )
+    lat = models.FloatField()
+    lng = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["delivery", "-created_at"]),
+        ]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.delivery_id} @ ({self.lat},{self.lng})"
 
 
 class Delivery(models.Model):

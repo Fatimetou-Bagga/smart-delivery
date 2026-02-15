@@ -42,6 +42,14 @@ class DeliveryRequest(models.Model):
     pickup_address = models.CharField(max_length=255)
     delivery_address = models.CharField(max_length=255)
 
+
+
+    # Coordonnées (lat/lng) — source & destination
+    pickup_lat = models.FloatField(null=True, blank=True)
+    pickup_lng = models.FloatField(null=True, blank=True)
+    delivery_lat = models.FloatField(null=True, blank=True)
+    delivery_lng = models.FloatField(null=True, blank=True)
+
     # Statut de la demande
     status = models.CharField(
         max_length=20,

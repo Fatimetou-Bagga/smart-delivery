@@ -1,0 +1,50 @@
+{% extends 'adminpanel/base.html' %}
+{% block title %}Create Livreur | Smart Delivery{% endblock %}
+{% block page_title %}Create Livreur{% endblock %}
+{% block page_sub %}Create a new courier account (livreur) without using Django Admin.{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="grid2">
+      <div class="field">
+        <label>Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="err">{{ form.username.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="err">{{ form.email.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>Phone number</label>
+        {{ form.phone_number }}
+        {% if form.phone_number.errors %}<div class="err">{{ form.phone_number.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="err">{{ form.password1.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>Confirm password</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="err">{{ form.password2.errors|striptags }}</div>{% endif %}
+      </div>
+    </div>
+
+    {% if form.non_field_errors %}<div class="err">{{ form.non_field_errors|striptags }}</div>{% endif %}
+
+    <div class="actions">
+      <button class="btn primary" type="submit">Create Livreur</button>
+      <a class="btn" href="/admin/users/?role=COURIER">View Couriers</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -3,6 +3,28 @@ from rest_framework import serializers
 from .models import Delivery
 from delivery_requests.serializers import DeliveryRequestSerializer
 from accounts.serializers import UserSerializer
+from rest_framework import serializers
+from .models import TrackingPoint
+
+class TrackingPointCreateSerializer(serializers.Serializer):
+    lat = serializers.FloatField()
+    lng = serializers.FloatField()
+
+    def validate_lat(self, v):
+        if v < -90 or v > 90:
+            raise serializers.ValidationError("Invalid latitude")
+        return v
+
+    def validate_lng(self, v):
+        if v < -180 or v > 180:
+            raise serializers.ValidationError("Invalid longitude")
+        return v
+
+
+class TrackingPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrackingPoint
+        fields = ["id", "lat", "lng", "created_at"]
 
 
 class DeliverySerializer(serializers.ModelSerializer):

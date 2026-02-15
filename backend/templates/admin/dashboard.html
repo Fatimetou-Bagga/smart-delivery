@@ -1,0 +1,262 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Smart Delivery | Admin Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.12);
+      --text:#e5e7eb;
+      --muted: rgba(229,231,235,.75);
+      --accent:#2563eb;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+    }
+    body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap{ width:min(1280px, 94vw); margin: 22px auto 40px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .title h1{ margin:0; font-size:26px; }
+    .title .sub{ margin-top:6px; color:var(--muted); }
+    .actions{ display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; }
+    .btn{
+      display:inline-block; padding:10px 14px; border-radius:12px;
+      border:1px solid var(--border); background:rgba(17,24,39,.65);
+      color:var(--text); text-decoration:none; font-weight:600;
+    }
+    .btn:hover{ border-color: rgba(255,255,255,.25); }
+    .btn.primary{ background: var(--accent); border-color: transparent; }
+    .btn.primary:hover{ filter: brightness(0.95); }
+    .btn.green{ background: var(--accent2); border-color: transparent; }
+    .btn.warn{ background: var(--warn); border-color: transparent; }
+    .btn.danger{ background: var(--danger); border-color: transparent; }
+
+    .grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin: 14px 0; }
+    .card{
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 16px; box-shadow: 0 12px 50px rgba(0,0,0,.35);
+    }
+    .kpi-label{ color:var(--muted); font-size:13px; }
+    .kpi{ font-size:28px; font-weight:800; margin-top:6px; }
+    .kpi-mini{ margin-top:8px; font-size:12px; color:var(--muted); }
+
+    .charts{ display:grid; grid-template-columns: 1.2fr 1fr; gap:12px; margin-top:12px; }
+    .charts .card{ padding:14px; }
+    h3{ margin:0 0 10px; font-size:16px; }
+    canvas{ width:100% !important; height: 260px !important; }
+
+    .tables{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px; }
+    table{ width:100%; border-collapse: collapse; overflow:hidden; border-radius:14px; }
+    th, td{ padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.10); font-size:13px; }
+    th{ text-align:left; color: var(--muted); font-weight:700; background: rgba(255,255,255,.04); }
+    tr:hover td{ background: rgba(255,255,255,.03); }
+    .badge{ padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700; display:inline-block; border:1px solid rgba(255,255,255,.16); }
+    .b-green{ background: rgba(34,197,94,.12); }
+    .b-blue{ background: rgba(37,99,235,.12); }
+    .b-yellow{ background: rgba(245,158,11,.12); }
+    .b-red{ background: rgba(239,68,68,.12); }
+
+    .footer-note{ color:var(--muted); margin-top:14px; font-size:12px; }
+
+    @media (max-width: 1100px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .charts{ grid-template-columns: 1fr; }
+      .tables{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px){
+      .grid{ grid-template-columns: 1fr; }
+      canvas{ height: 240px !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="top">
+      <div class="title">
+        <h1>Admin Dashboard</h1>
+        <div class="sub">Smart Delivery — monitoring users, requests, deliveries, and system health</div>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="/admin/dashboard/">Refresh</a>
+
+        <!-- Quick actions -->
+        <a class="btn green" href="/admin/create-courier/">Create Courier (via Admin)</a>
+        <a class="btn" href="/admin/users/">Users</a>
+        <a class="btn" href="/admin/assign-courier/">Assign Requests</a>
+        <a class="btn" href="/admin/delivery_requests/deliveryrequest/">Delivery Requests</a>
+        <a class="btn" href="/admin/delivery/delivery/">Deliveries</a>
+
+        <a class="btn warn" href="/swagger/">Swagger</a>
+        <a class="btn" href="/redoc/">Redoc</a>
+
+        <a class="btn danger" href="/admin/logout/">Logout</a>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid">
+      <div class="card">
+        <div class="kpi-label">Total Users</div>
+        <div class="kpi">{{ users_total }}</div>
+        <div class="kpi-mini">Clients: {{ clients_total }} — Couriers: {{ couriers_total }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Delivery Requests (Total)</div>
+        <div class="kpi">{{ dr_total }}</div>
+        <div class="kpi-mini">Today: {{ dr_today }} — Last 7 days: {{ dr_last_7 }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Deliveries (Total)</div>
+        <div class="kpi">{{ deliveries_total }}</div>
+        <div class="kpi-mini">Active (assigned/in-progress): {{ deliveries_active }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Admin Tools</div>
+        <div class="kpi" style="font-size:18px; font-weight:800;">Quick Actions</div>
+        <div class="kpi-mini" style="margin-top:10px;">
+          • Create courier<br/>
+          • Monitor requests/deliveries<br/>
+          • Use Swagger for API tests
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts">
+      <div class="card">
+        <h3>Requests & Deliveries Status Overview</h3>
+        <canvas id="statusBar"></canvas>
+      </div>
+      <div class="card">
+        <h3>Users by Role</h3>
+        <canvas id="usersPie"></canvas>
+      </div>
+      <div class="card">
+        <h3>Requests by Status</h3>
+        <canvas id="requestsPie"></canvas>
+      </div>
+      <div class="card">
+        <h3>Deliveries by Status</h3>
+        <canvas id="deliveriesPie"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="tables">
+      <div class="card">
+        <h3>Recent Delivery Requests</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Client</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recent_requests %}
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td><span class="badge b-blue">{{ r.status }}</span></td>
+                <td>{{ r.client__email }}</td>
+                <td>{{ r.created_at }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">No delivery requests yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Recent Deliveries</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Courier</th>
+              <th>Assigned</th>
+              <th>Req ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in recent_deliveries %}
+              <tr>
+                <td>#{{ d.id }}</td>
+                <td>
+                  <span class="badge
+                    {% if d.status == 'DELIVERED' %}b-green{% elif d.status == 'CANCELLED' %}b-red{% elif d.status == 'IN_PROGRESS' %}b-yellow{% else %}b-blue{% endif %}">
+                    {{ d.status }}
+                  </span>
+                </td>
+                <td>{{ d.courier__email }}</td>
+                <td>{{ d.assigned_at }}</td>
+                <td>#{{ d.delivery_request_id }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5">No deliveries yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Tip: Use <b>Swagger</b> to test APIs quickly, and Django <b>Admin</b> to manage data & permissions.
+    </div>
+  </div>
+
+  <script>
+    // Data from Django context (already JSON-friendly lists of dicts)
+    const usersByRole = {{ users_by_role|safe }};
+    const drByStatus = {{ dr_by_status|safe }};
+    const delByStatus = {{ del_by_status|safe }};
+
+    function pie(canvasId, items, labelKey, valueKey) {
+      new Chart(document.getElementById(canvasId), {
+        type: "doughnut",
+        data: {
+          labels: items.map(x => x[labelKey]),
+          datasets: [{ data: items.map(x => x[valueKey]) }]
+        },
+        options: { plugins: { legend: { position: "bottom" } } }
+      });
+    }
+
+    pie("usersPie", usersByRole, "role", "count");
+    pie("requestsPie", drByStatus, "status", "count");
+    pie("deliveriesPie", delByStatus, "status", "count");
+
+    // Status bar chart combining requests + deliveries counts
+    const reqLabels = drByStatus.map(x => x.status);
+    const reqCounts = drByStatus.map(x => x.count);
+
+    const delLabels = delByStatus.map(x => x.status);
+    const delCounts = delByStatus.map(x => x.count);
+
+    new Chart(document.getElementById("statusBar"), {
+      type: "bar",
+      data: {
+        labels: ["Requests", "Deliveries"],
+        datasets: [
+          { label: "Count", data: [reqCounts.reduce((a,b)=>a+b,0), delCounts.reduce((a,b)=>a+b,0)] }
+        ]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  </script>
+</body>
+</html>
